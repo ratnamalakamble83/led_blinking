@@ -1,52 +1,32 @@
-const int LED_PIN = 13;
-const int BUTTON_PIN = 2;
+int led = 13;
+int button = 2;
 
-bool blinking = false;
-
-int lastButtonState = HIGH;
-
-unsigned long previousMillis = 0;
-const unsigned long blinkInterval = 500;
+bool state = false;
 
 void setup()
 {
-  pinMode(LED_PIN, OUTPUT);
-
-  // Button connected between pin 2 and GND
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
-
-  digitalWrite(LED_PIN, LOW);
+  pinMode(led, OUTPUT);
+  pinMode(button, INPUT_PULLUP);
 }
 
 void loop()
 {
-  int buttonState = digitalRead(BUTTON_PIN);
-
-  // Detect button press
-  if (lastButtonState == HIGH && buttonState == LOW)
+  if (digitalRead(button) == LOW)
   {
-    blinking = !blinking;
-
-    delay(50);   // simple debounce
+    state = !state;
+    delay(300);
   }
 
-  lastButtonState = buttonState;
-
-  // LED blinking
-  if (blinking)
+  if (state == true)
   {
-    unsigned long currentMillis = millis();
+    digitalWrite(led, HIGH);
+    delay(500);
 
-    if (currentMillis - previousMillis >= blinkInterval)
-    {
-      previousMillis = currentMillis;
-
-      digitalWrite(LED_PIN, !digitalRead(LED_PIN));
-    }
+    digitalWrite(led, LOW);
+    delay(500);
   }
   else
   {
-    // Button pressed second time -> LED OFF
-    digitalWrite(LED_PIN, LOW);
+    digitalWrite(led, LOW);
   }
 }
