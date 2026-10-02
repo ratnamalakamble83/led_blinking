@@ -1,13 +1,52 @@
-// Arduino Uno - LED Blinking
+const int LED_PIN = 13;
+const int BUTTON_PIN = 2;
 
-void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
+bool blinking = false;
+
+int lastButtonState = HIGH;
+
+unsigned long previousMillis = 0;
+const unsigned long blinkInterval = 500;
+
+void setup()
+{
+  pinMode(LED_PIN, OUTPUT);
+
+  // Button connected between pin 2 and GND
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+
+  digitalWrite(LED_PIN, LOW);
 }
 
-void loop() {
-  digitalWrite(LED_BUILTIN, HIGH); // LED ON
-  delay(1000);                     // Wait 1 second
+void loop()
+{
+  int buttonState = digitalRead(BUTTON_PIN);
 
-  digitalWrite(LED_BUILTIN, LOW);  // LED OFF
-  delay(1000);                     // Wait 1 second
+  // Detect button press
+  if (lastButtonState == HIGH && buttonState == LOW)
+  {
+    blinking = !blinking;
+
+    delay(50);   // simple debounce
+  }
+
+  lastButtonState = buttonState;
+
+  // LED blinking
+  if (blinking)
+  {
+    unsigned long currentMillis = millis();
+
+    if (currentMillis - previousMillis >= blinkInterval)
+    {
+      previousMillis = currentMillis;
+
+      digitalWrite(LED_PIN, !digitalRead(LED_PIN));
+    }
+  }
+  else
+  {
+    // Button pressed second time -> LED OFF
+    digitalWrite(LED_PIN, LOW);
+  }
 }
